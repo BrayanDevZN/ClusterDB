@@ -19,8 +19,16 @@ def get_paths() -> str:
             logger.info(f"Creating path {name}...")
             path.mkdir(exist_ok=True)
 
+    envs = ["prod", "staging", "test", "develop"]
+    for env in envs:
+        path = BASE_DIR / "clusters" / env 
 
-    logger.success(f"Created paths in {BASE_DIR}/...")
+        if not os.path.exists(path):
+            logger.info(f"Creating environment {env}...")
+            path.mkdir(exist_ok=True)
+
+
+    logger.success(f"Created paths in {BASE_DIR}/")
     
     return f"sqlite+aiosqlite:///{BASE_DIR}/database/users.db"
 
