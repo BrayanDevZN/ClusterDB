@@ -6,6 +6,7 @@ import os
 def get_paths() -> str:
         
     BASE_DIR = Path(__file__).resolve().parent.parent.parent / "data"
+    BASE_DIR.mkdir(exist_ok=True)
     
     paths = ["clusters", "database"]
 
