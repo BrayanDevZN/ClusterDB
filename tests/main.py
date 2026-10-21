@@ -50,7 +50,7 @@ class ExecuteTests:
 
         logger.info(f"Get files in {self.path}...")
 
-        self.paths = os.listdir(self.path)
+        self.paths = os.listdir(self.path) if os.path.exists(self.path) else False
 
         if self.paths:
 
