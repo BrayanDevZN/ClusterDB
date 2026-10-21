@@ -7,7 +7,10 @@ import asyncio
 
 async def test_table() -> None:
 
-    control_db = DatabaseControl(engine=make_connection.engine, session=make_connection.session)
+    control_db = DatabaseControl(
+        engine=make_connection.engine,
+        session=make_connection.session
+    )
 
 
     print("\n=== CREATE TABLES ===")
@@ -17,7 +20,12 @@ async def test_table() -> None:
 
     print("\n=== USERS ===")
 
-    user = await control_db.users.create(user_name="brayan", email="brayan@email.com", password="123456", role="admin")
+    user = await control_db.users.create(
+        user_name="brayan",
+        email="brayan@email.com",
+        password="123456",
+        role="admin"
+    )
     print(user)
 
     user_id = user["id"]
@@ -29,12 +37,20 @@ async def test_table() -> None:
     print(await control_db.users.get_by_email("brayan@email.com"))
     print(await control_db.users.get_all())
 
-    print(await control_db.users.update(user_id, user_name="brayan_updated"))
+    print(await control_db.users.update(
+        user_id,
+        user_name="brayan_updated"
+    ))
 
 
     print("\n=== KEYS ===")
 
-    key = await control_db.keys.create(user_id=user_id, permission_db="all", permission_actions="all", environment="test")
+    key = await control_db.keys.create(
+        user_id=user_id,
+        permission_db="all",
+        permission_actions="all",
+        environment="test"
+    )
     print(key)
 
     key_id = key["id"]
@@ -46,12 +62,19 @@ async def test_table() -> None:
     print(await control_db.keys.get_by_environment("test"))
     print(await control_db.keys.get_all())
 
-    print(await control_db.keys.update(key_id, environment="develop"))
+    print(await control_db.keys.update(
+        key_id,
+        environment="develop"
+    ))
 
 
     print("\n=== CLUSTERS ===")
 
-    cluster = await control_db.clusters.create(cluster_name="test_cluster", instance_limit=10, created_key=key_id)
+    cluster = await control_db.clusters.create(
+        cluster_name="test_cluster",
+        instance_limit=10,
+        created_key=key_id
+    )
     print(cluster)
 
     cluster_id = cluster["id"]
@@ -63,21 +86,65 @@ async def test_table() -> None:
     print(await control_db.clusters.get_by_created_key(key_id))
     print(await control_db.clusters.get_all())
 
-    print(await control_db.clusters.update(cluster_id, instance_limit=20))
+    print(await control_db.clusters.update(
+        cluster_id,
+        instance_limit=20
+    ))
 
 
     print("\n=== INSTANCES ===")
 
-    instance = await control_db.instances.create(cluster_id=cluster_id)
+    instance = await control_db.instances.create(
+        cluster_id=cluster_id
+    )
     print(instance)
 
     instance_id = instance["id"]
+
+
+    print("\n=== CREATE CENTRAL ===")
+
+    mean = [0.12, 0.34, 0.56, 0.78]
+
+    central = await control_db.instances.create_central(
+        instance_id=instance_id,
+        mean=mean
+    )
+    print(central)
+
+
+    print("\n=== GET INSTANCES WITH MEAN ===")
 
     print(await control_db.instances.get_by_id(instance_id))
     print(await control_db.instances.get_by_cluster_id(cluster_id))
     print(await control_db.instances.get_all())
 
-    print(await control_db.instances.update(instance_id, cluster_id=cluster_id))
+
+    print("\n=== UPDATE INSTANCE ===")
+
+    print(await control_db.instances.update(
+        instance_id,
+        cluster_id=cluster_id
+    ))
+
+
+    print("\n=== UPDATE MEAN ===")
+
+    new_mean = [0.20, 0.40, 0.60, 0.80]
+
+    print(await control_db.instances.update(
+        instance_id,
+        mean=new_mean
+    ))
+
+
+    print("\n=== GET UPDATED INSTANCE ===")
+
+    updated_instance = await control_db.instances.get_by_id(instance_id)
+    print(updated_instance)
+
+    assert updated_instance is not None
+    assert updated_instance["mean"] == new_mean
 
 
     print("\n=== DELETE RECORDS ===")
